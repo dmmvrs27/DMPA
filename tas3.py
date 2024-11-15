@@ -1,35 +1,34 @@
+import cv2 as cv
 import cv2
-import numpy as np
 
-cap = cv2.VideoCapture(0)
+#Задание 3 Отобразить видео в окне. Рассмотреть методы класса
+#VideoCapture и попробовать отображать видео в разных форматах, в частности
+#размеры и цветовая гамма.
 
-while True:
-    ret, img = cap.read()
-    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+cap = cv2.VideoCapture('/Users/denismalysev/Desktop/dog.mp4')
+cv2.namedWindow('Video1', cv2.WINDOW_NORMAL)
+cv2.namedWindow('Video2', cv2.WINDOW_NORMAL)
+cv2.namedWindow('Video3', cv2.WINDOW_NORMAL)
 
-    min_red1 = np.array([0, 100, 100])
-    max_red1 = np.array([7, 255, 255])
-    min_red2 = np.array([170, 100, 100])
-    max_red2 = np.array([180, 255, 255])
+cv2.resizeWindow('Video1', 800, 600)
+cv2.resizeWindow('Video2', 1024, 1000)
+cv2.resizeWindow('Video3', 1800, 800)
 
-    mask_1 = cv2.inRange(hsv, min_red1, max_red1)
-    mask_2 = cv2.inRange(hsv, min_red2, max_red2)
-    mask = cv2.add(mask_1, mask_2)
-    res = cv2.bitwise_and(img, img, mask=mask)
+# чтение видеофайла кадр за кадром
+while cap.isOpened():
+    ret, frame = cap.read()
+    if ret:
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+        lab = cv2.cvtColor(frame, cv2.COLOR_BGR2LAB)
 
+        cv2.imshow('Video1', gray)
+        cv2.imshow('Video2', hsv)
+        cv2.imshow('Video3', lab)
 
-    core = np.ones((11, 11), np.uint8)
-    open = cv2.morphologyEx(res, cv2.MORPH_OPEN, core)
-    close = cv2.morphologyEx(res, cv2.MORPH_CLOSE, core)
-
-    cv2.imshow('Openin', open)
-    cv2.imshow('Close', close)
-
-    if cv2.waitKey(1) & 0xFF == 27:
-        break
-
-    if not ret:
-        print("Кадр не считан")
+        if cv2.waitKey(25) & 0xFF == 27:
+            break
+    else:
         break
 
 cap.release()
