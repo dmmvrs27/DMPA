@@ -17,13 +17,9 @@ while True:
     mask = cv2.add(mask_1, mask_2)
     res = cv2.bitwise_and(img, img, mask=mask)
 
-
-    core = np.ones((11, 11), np.uint8)
-    open = cv2.morphologyEx(res, cv2.MORPH_OPEN, core)
-    close = cv2.morphologyEx(res, cv2.MORPH_CLOSE, core)
-
-    cv2.imshow('Openin', open)
-    cv2.imshow('Close', close)
+    cv2.imshow('Original', img)
+    cv2.imshow('HSV', hsv)
+    cv2.imshow('Res', res)
 
     if cv2.waitKey(1) & 0xFF == 27:
         break
@@ -32,5 +28,6 @@ while True:
         print("Кадр не считан")
         break
 
+# Освобождение ресурсов
 cap.release()
 cv2.destroyAllWindows()

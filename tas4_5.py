@@ -15,15 +15,27 @@ while True:
     mask_1 = cv2.inRange(hsv, min_red1, max_red1)
     mask_2 = cv2.inRange(hsv, min_red2, max_red2)
     mask = cv2.add(mask_1, mask_2)
-    res = cv2.bitwise_and(img, img, mask=mask)
 
+    moment = cv2.moments(mask)
+    area = moment['m00']
+    print("Площадь:", area)
 
-    core = np.ones((11, 11), np.uint8)
-    open = cv2.morphologyEx(res, cv2.MORPH_OPEN, core)
-    close = cv2.morphologyEx(res, cv2.MORPH_CLOSE, core)
+    if area > 0:
+        width = height = int(np.sqrt(area))
+        #Центр объекта
+        centr_x = int(moment["m10"] / moment["m00"])
+        centr_y = int(moment["m01"] / moment["m00"])
 
-    cv2.imshow('Openin', open)
-    cv2.imshow('Close', close)
+        #Прямоугрльник
+        color = (0, 0, 0)
+        fat = 3
+
+        cv2.rectangle(img,
+            (centr_x - (width // 25), centr_y - (height // 25)),
+            (centr_x + (width // 25), centr_y + (height // 25)),
+            color, fat)
+
+    cv2.imshow('Traking', img)
 
     if cv2.waitKey(1) & 0xFF == 27:
         break
